@@ -1,0 +1,36 @@
+# Dependencies & Build Output
+target/
+build/
+bin/
+node_modules/
+dist/
+.gradle/
+
+# Environment Variables & Secrets (CRITICAL)
+.env
+.env.local
+.env.*.local
+*.env
+
+# IDE & Editor Specific
+.idea/
+*.iml
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+
+# Logs & Temp Files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+tmp/
+temp/
+
+# Package Lock (keep package.json, ignore package-lock if monorepo mismatch)
+# (we will keep package.json and pom.xml)
