@@ -1,0 +1,36 @@
+server:
+  port: ${PORT:8080}
+  tomcat:
+    threads:
+      max: 20
+      min-spare: 2
+    max-connections: 100
+
+spring:
+  application:
+    name: studentseva-backend
+
+  # Autoconfiguration excludes for Day 1 skeleton testing (until Supabase is connected in Day 2)
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration
+      - org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+  api-docs:
+    path: /v3/api-docs
+
