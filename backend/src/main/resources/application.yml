@@ -70,3 +70,12 @@ app:
     expiration-ms: 86400000
     # Name of the httpOnly cookie that stores the JWT
     cookie-name: nearbuzz_token
+
+  # OTP Configuration (Day 4: used by AuthService)
+  otp:
+    expiration-minutes: 5
+    max-per-10-minutes: 5
+
+  # Cookie Security (false in dev localhost HTTP, true in prod HTTPS)
+  cookie:
+    secure: ${COOKIE_SECURE:false}

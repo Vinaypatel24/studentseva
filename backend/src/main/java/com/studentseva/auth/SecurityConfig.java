@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -81,9 +83,14 @@ public class SecurityConfig {
 
                 // Public routes — no login required
                 .requestMatchers("/api/v1/health/**").permitAll()
-                .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+
+                // Authenticated auth routes
+                .requestMatchers("/api/v1/auth/me").authenticated()
+
+                // Public auth routes (send-otp, verify-otp, logout)
+                .requestMatchers("/api/v1/auth/**").permitAll()
 
                 // Admin-only routes — ROLE_ADMIN required
                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
@@ -178,5 +185,14 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
+    }
+
+    /**
+     * PasswordEncoder bean using BCrypt hashing algorithm.
+     * Used for hashing and verifying one-time passwords (OTP).
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

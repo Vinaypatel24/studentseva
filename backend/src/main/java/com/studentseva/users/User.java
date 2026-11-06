@@ -77,7 +77,12 @@ public class User implements UserDetails {
         this.createdAt = Instant.now();
         this.updatedAt = Instant.now();
         if (this.role == null)   this.role   = Role.STUDENT;
-        if (this.status == null) this.status = Status.PENDING;
+        if (this.status == null) this.status = Status.ACTIVE;
+        if (this.name == null || this.name.isBlank()) {
+            this.name = (this.email != null && this.email.contains("@"))
+                    ? this.email.substring(0, this.email.indexOf('@'))
+                    : "Student";
+        }
     }
 
     /**
@@ -95,7 +100,7 @@ public class User implements UserDetails {
     }
 
     public enum Status {
-        PENDING, ACTIVE, SUSPENDED
+        ACTIVE, SUSPENDED, DELETED
     }
 
     // ── UserDetails Implementation ────────────────────────────────────────────
