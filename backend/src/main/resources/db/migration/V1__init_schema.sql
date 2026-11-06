@@ -139,3 +139,4 @@ CREATE TABLE IF NOT EXISTS listing_reports (
     resolved_at TIMESTAMPTZ
 );
 CREATE INDEX IF NOT EXISTS idx_reports_status ON listing_reports(status);
+

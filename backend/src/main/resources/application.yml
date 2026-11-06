@@ -54,3 +54,19 @@ springdoc:
     operationsSorter: method
   api-docs:
     path: /v3/api-docs
+
+# ── StudentSeva custom application config ──────────────────────────────────────
+app:
+  # Frontend URL — used by CORS to allow only our React app to call the API
+  # In dev: http://localhost:5173 (Vite default port)
+  # In prod (Render + Vercel): set FRONTEND_URL env var in Render dashboard
+  frontend-url: ${FRONTEND_URL:http://localhost:5173}
+
+  # JWT Configuration (Day 3 - Phase 2: used by JwtService)
+  jwt:
+    # Secret key for signing tokens — MUST be set via JWT_SECRET env var in production
+    secret: ${JWT_SECRET:super_secret_jwt_key_studentseva_2026_for_signing_http_only_cookie_tokens}
+    # Token validity: 86400000 ms = 24 hours
+    expiration-ms: 86400000
+    # Name of the httpOnly cookie that stores the JWT
+    cookie-name: nearbuzz_token
