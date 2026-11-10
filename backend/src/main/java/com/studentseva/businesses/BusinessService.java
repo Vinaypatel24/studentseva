@@ -2,6 +2,8 @@ package com.studentseva.businesses;
 
 import com.studentseva.businesses.dto.BusinessResponse;
 import com.studentseva.businesses.dto.CreateBusinessRequest;
+import com.studentseva.businesses.dto.NearbyBusinessProjection;
+import com.studentseva.businesses.dto.NearbyBusinessResponse;
 import com.studentseva.common.exceptions.NotFoundException;
 import com.studentseva.users.User;
 import com.studentseva.users.UserRepository;
@@ -12,6 +14,7 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -93,6 +96,51 @@ public class BusinessService {
                 .orElseThrow(() -> new NotFoundException("Business not found with ID: " + id));
 
         return toBusinessResponse(business);
+    }
+
+    /**
+     * Searches for nearby businesses within a given radius using PostGIS ST_DWithin and ST_Distance.
+     */
+    @Transactional(readOnly = true)
+    public List<NearbyBusinessResponse> searchNearby(
+            Double lat,
+            Double lng,
+            Double radiusMeters,
+            Business.Category category
+    ) {
+        if (lat == null || lat < -90.0 || lat > 90.0) {
+            throw new IllegalArgumentException("Valid latitude between -90.0 and 90.0 is required.");
+        }
+        if (lng == null || lng < -180.0 || lng > 180.0) {
+            throw new IllegalArgumentException("Valid longitude between -180.0 and 180.0 is required.");
+        }
+
+        double radius = (radiusMeters == null || radiusMeters <= 0) ? 2000.0 : Math.min(radiusMeters, 50000.0);
+        int limit = 50;
+
+        List<NearbyBusinessProjection> projections = (category != null)
+                ? businessRepository.findNearbyByCategory(lat, lng, radius, category.name(), limit)
+                : businessRepository.findNearby(lat, lng, radius, limit);
+
+        return projections.stream()
+                .map(p -> new NearbyBusinessResponse(
+                        p.getId(),
+                        p.getOwnerId(),
+                        p.getOwnerName(),
+                        p.getName(),
+                        p.getCategory(),
+                        p.getDescription(),
+                        p.getAddress(),
+                        p.getLatitude(),
+                        p.getLongitude(),
+                        p.getPhone(),
+                        p.getWhatsapp(),
+                        p.getStatus(),
+                        p.getVerificationStatus(),
+                        p.getDistanceMeters(),
+                        p.getCreatedAt()
+                ))
+                .toList();
     }
 
     /**

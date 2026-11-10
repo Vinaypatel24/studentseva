@@ -2,6 +2,7 @@ package com.studentseva.businesses;
 
 import com.studentseva.businesses.dto.BusinessResponse;
 import com.studentseva.businesses.dto.CreateBusinessRequest;
+import com.studentseva.businesses.dto.NearbyBusinessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -42,6 +44,17 @@ public class BusinessController {
     public ResponseEntity<BusinessResponse> getMyBusiness(Authentication authentication) {
         String userEmail = authentication.getName();
         return ResponseEntity.ok(businessService.getMyBusiness(userEmail));
+    }
+
+    @GetMapping("/nearby")
+    @Operation(summary = "Search for nearby businesses by GPS coordinates (public)")
+    public ResponseEntity<List<NearbyBusinessResponse>> getNearbyBusinesses(
+            @RequestParam Double lat,
+            @RequestParam Double lng,
+            @RequestParam(required = false, defaultValue = "2000") Double radius,
+            @RequestParam(required = false) Business.Category category
+    ) {
+        return ResponseEntity.ok(businessService.searchNearby(lat, lng, radius, category));
     }
 
     @GetMapping("/{id}")
